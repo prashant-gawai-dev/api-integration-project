@@ -1,42 +1,3 @@
-"""
-from fastapi import FastAPI
-from pydantic import BaseModel
-import httpx
-from fastapi import HTTPException
-app = FastAPI()
-
-@app.get("/")
-def read_root():
-        return {"message":"Step 1"}
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, detail: bool = False):
-    return {"item_id": item_id, "detail": detail}
-
-class APIConfig(BaseModel):
-        name: str
-        endpoint: str
-        auth_type: str
-        timeout: int=30
-        rate_limit : int=100
-
-@app.post("/configs")
-def create_config(config: APIConfig):
-        return{"received": config}
-{
-  "name": "weather_api",
-  "endpoint": "https://api.open-meteo.com",
-  "auth_type": "none",
-  "rate_limit": "{$rate_limit}"
-}
-
-
-@app.get("/weather")
-def get_weather(lat:float,lon:float):
-response = httpx.get(f"https://api.open-meteo-WRONG.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true")
-return response.json()
-"""
-
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
 import httpx
@@ -46,7 +7,8 @@ from model import APIConfig as APIConfigModel
 
 app = FastAPI()
 
-Base.metadata.create_all(bind=engine)
+if engine is not None:
+    Base.metadata.create_all(bind=engine)
 
 
 def get_db():
@@ -142,13 +104,6 @@ def deleteConfig(config_id: int, db: Session = Depends(get_db)):
 @app.get("/weather")
 def get_weather(lat: float, lon: float):
     try:
-
-        """
-                response = httpx.get(
-            f"https://api.open-meteo-WRONG.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true",
-            timeout=5.0,
-        )
-        """
         response = httpx.get(
             f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true",
             timeout=5.0,
