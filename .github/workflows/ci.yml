@@ -43,7 +43,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd api-integration-project
-            git pull
+            git fetch origin
+            git reset --hard origin/main
             docker build -t api-integration-project .
             docker stop api-project || true
             docker rm api-project || true
